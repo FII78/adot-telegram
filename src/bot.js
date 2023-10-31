@@ -1,9 +1,12 @@
 const axios = require('axios');
+const express = require('express');
+const bodyParser = require('body-parser');
+const port = 8443; 
 const TelegramBot = require('node-telegram-bot-api');
 const { fetchCategories, fetchTopics, fetchInsights, fetchInsightId, getStickerSetInfo, signup, login, createJournal,getImageInfo, getJournal,getVoiceInfo, fetchJournal } = require('./services/telegramService');
 require('dotenv').config();
 const player = require('play-sound')();
-const bot = new TelegramBot(process.env.BOT_TOKEN, { polling: false });
+const bot = new TelegramBot(process.env.BOT_TOKEN);
 const registrationData = {};
 const inMemorySessions = {};
 const ConversationState = {
@@ -26,12 +29,34 @@ const stickerSetName = 'PlushBabyBunny';
 const userJournalData = {};
 
 
-const webhookUrl = 'https://your-domain.com/webhook-endpoint';  
+const app = express();
 
+const webhookUrl = 'https://adot-test.onrender.com/webhook';  
 
-bot.setWebHook(webhookUrl).then(() => {
-  console.log('Webhook set up!');
+// Your server's port for webhook
+ 
+bot.setWebHook(webhookUrl);
+
+bot.on('webhook_error', (error) => {
+  console.error('Webhook error:', error);
 });
+
+
+
+
+app.use(bodyParser.json());
+
+app.post('/webhook', (req, res) => {
+  bot.processUpdate(req.body);
+  res.sendStatus(200);
+});
+ 
+app.listen(port, () => {
+  console.log(`Bot server is listening at port ${port}`);
+});
+
+
+
 
 bot.on('contact', async (msg) => {
   const chatId = msg.chat.id;
