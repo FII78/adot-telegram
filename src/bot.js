@@ -31,18 +31,14 @@ const userJournalData = {};
 
 const app = express();
 
-const webhookUrl = 'https://adot-test.onrender.com/webhook';  
+const webhookUrl = 'https://adot-tg.onrender.com/webhook';  
 
-// Your server's port for webhook
  
 bot.setWebHook(webhookUrl);
 
 bot.on('webhook_error', (error) => {
   console.error('Webhook error:', error);
 });
-
-
-
 
 app.use(bodyParser.json());
 
@@ -54,7 +50,6 @@ app.post('/webhook', (req, res) => {
 app.listen(port, () => {
   console.log(`Bot server is listening at port ${port}`);
 });
-
 
 
 
